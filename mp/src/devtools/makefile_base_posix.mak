@@ -99,6 +99,12 @@ else ifeq ($(USE_VALVE_BINDIR),1)
 	GCC_VER = -4.6
 	P4BIN = p4
 	CRYPTOPPDIR=linux32
+else ifeq ($(USE_NATIVE),1)
+	# Native build
+	export STEAM_RUNTIME_PATH := /usr
+	GCC_VER = -11
+	P4BIN = p4
+	CRYPTOPPDIR=ubuntu12_32
 else
 	# Not using chroot, use old steam-runtime. (gcc 4.6.3)
 	export STEAM_RUNTIME_PATH ?= /valve/steam-runtime
@@ -164,6 +170,11 @@ endif
 ifeq ($(CLANG_BUILD),1)
 	# Clang specific flags
 else ifeq ($(GCC_VER),-4.8)
+	WARN_FLAGS += -Wno-unused-local-typedefs
+	WARN_FLAGS += -Wno-unused-result
+	WARN_FLAGS += -Wno-narrowing
+	# WARN_FLAGS += -Wno-unused-function
+else ifeq ($(GCC_VER),-11)
 	WARN_FLAGS += -Wno-unused-local-typedefs
 	WARN_FLAGS += -Wno-unused-result
 	WARN_FLAGS += -Wno-narrowing
