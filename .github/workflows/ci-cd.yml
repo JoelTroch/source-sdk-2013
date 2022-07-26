@@ -1,0 +1,24 @@
+name: CI/CD
+
+on: [push, pull_request]
+
+jobs:
+  linux:
+    name: Linux (Native x86 GCC 11)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+
+      - name: Install G++ Multilib
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt update
+          sudo apt install -y gcc-11-multilib g++-11-multilib
+
+      - name: Run Valve Project Creator
+        run: cd mp/src && ./creategameprojects
+
+      - name: Build
+        run: cd mp/src && USE_NATIVE=1 make -f games.mak
